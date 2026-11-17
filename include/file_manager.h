@@ -35,4 +35,4 @@ void free_filesystem(DirectoryNode *dir);
 void get_current_path(DirectoryNode *dir, char *buffer);
 void get_timestamp(char *buffer);
 
-#endif /* FILE_MANAGER_H */
+#endif
