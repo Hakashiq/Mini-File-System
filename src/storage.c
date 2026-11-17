@@ -1,11 +1,6 @@
 #include "../include/file_manager.h"
 
-/* ════════════════════════════════════════════════════════════
-   SAVE  (in-memory tree  →  binary file)
-   ════════════════════════════════════════════════════════════ */
-
 static void save_files(FILE *fp, FileNode *head) {
-    /* Count files */
     int count = 0;
     FileNode *f = head;
     while (f) { count++; f = f->next; }
@@ -17,8 +12,7 @@ static void save_files(FILE *fp, FileNode *head) {
         fwrite(&f->size,       sizeof(size_t), 1,        fp);
         fwrite(f->created_at,  sizeof(char),   32,       fp);
         fwrite(f->modified_at, sizeof(char),   32,       fp);
-
-        /* Write content length, then content bytes */
+       
         size_t clen = (f->content) ? f->size : 0;
         fwrite(&clen, sizeof(size_t), 1, fp);
         if (clen > 0) fwrite(f->content, sizeof(char), clen, fp);
@@ -29,11 +23,9 @@ static void save_files(FILE *fp, FileNode *head) {
 
 static void save_directory(FILE *fp, DirectoryNode *dir) {
     if (!dir) return;
-
     fwrite(dir->name, sizeof(char), MAX_NAME, fp);
     save_files(fp, dir->files);
 
-    /* Count and write children count */
     int child_count = 0;
     DirectoryNode *c = dir->children;
     while (c) { child_count++; c = c->sibling; }
@@ -53,10 +45,6 @@ void save_filesystem(void) {
     fclose(fp);
     printf("  Filesystem saved to '%s'.\n", DATA_FILE);
 }
-
-/* ════════════════════════════════════════════════════════════
-   LOAD  (binary file  →  in-memory tree)
-   ════════════════════════════════════════════════════════════ */
 
 static FileNode *load_files(FILE *fp) {
     int count;
@@ -84,11 +72,9 @@ static FileNode *load_files(FILE *fp) {
             f->content = NULL;
         }
 
-        /* Prepend to list */
         f->next = head;
         head    = f;
     }
-
     return head;
 }
 
@@ -110,18 +96,15 @@ static DirectoryNode *load_directory(FILE *fp, DirectoryNode *parent) {
         child->sibling = dir->children;
         dir->children  = child;
     }
-
     return dir;
 }
 
 int load_filesystem(void) {
     FILE *fp = fopen(DATA_FILE, "rb");
-    if (!fp) return 0;   /* no saved data yet */
-
+    if (!fp) return 0; 
     filesystem_root   = load_directory(fp, NULL);
     current_directory = filesystem_root;
     fclose(fp);
-
     printf("  Filesystem loaded from '%s'.\n", DATA_FILE);
     return 1;
 }
