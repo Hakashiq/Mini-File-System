@@ -8,4 +8,4 @@ void delete_directory(void);
 void change_directory(void);
 void print_current_path(void);
 
-#endif /* DIRECTORY_OPERATIONS_H */
+#endif 
