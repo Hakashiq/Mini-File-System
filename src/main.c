@@ -3,14 +3,9 @@
 #include "../include/file_operations.h"
 #include "../include/directory_operations.h"
 
-/* Declared in storage.c */
 int  load_filesystem(void);
 void save_filesystem(void);
 
-/* ─────────────────────────────────────────────────────────────
-   list_directories()
-   Lists all immediate child directories of current_directory.
-   ───────────────────────────────────────────────────────────── */
 static void list_directories(void) {
     DirectoryNode *c = current_directory->children;
     if (c == NULL) {
@@ -25,17 +20,12 @@ static void list_directories(void) {
     printf("\n");
 }
 
-/* ─────────────────────────────────────────────────────────────
-   print_menu()
-   Clears the screen and renders the main menu.
-   ───────────────────────────────────────────────────────────── */
 static void print_menu(void) {
 #ifdef _WIN32
     system("cls");
 #else
     system("clear");
 #endif
-
     printf("\n");
     printf("  ============================================\n");
     printf("        MINI FILE SYSTEM SIMULATOR\n");
@@ -64,26 +54,16 @@ static void print_menu(void) {
     printf("  Enter your choice: ");
 }
 
-/* ─────────────────────────────────────────────────────────────
-   main()
-   Entry point. Loads saved data or initialises fresh tree.
-   Runs the menu loop until the user chooses Exit.
-   Saves and frees everything on exit.
-   ───────────────────────────────────────────────────────────── */
 int main(void) {
     printf("\n  Starting Mini File System Simulator...\n");
-
     if (!load_filesystem()) {
         init_filesystem();
         printf("  No saved data found. Fresh filesystem created.\n");
     }
-
     int choice;
-
     do {
         print_menu();
         if (scanf("%d", &choice) != 1) {
-            /* Clear bad input */
             int c;
             while ((c = getchar()) != '\n' && c != EOF);
             choice = 0;
